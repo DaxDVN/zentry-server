@@ -4,8 +4,8 @@ namespace Zentry.SharedKernel.Domain;
 
 public abstract class Enumeration(int id, string name) : IComparable
 {
-    private int Id { get; } = id;
-    private string Name { get; } = name ?? throw new ArgumentNullException(nameof(name));
+    public int Id { get; } = id;
+    private string Name { get; } = name;
 
     public int CompareTo(object? obj)
     {
@@ -34,5 +34,19 @@ public abstract class Enumeration(int id, string name) : IComparable
     public override int GetHashCode()
     {
         return HashCode.Combine(Id, Name);
+    }
+
+    public static T FromName<T>(string name) where T : Enumeration
+    {
+        var matchingItem =
+            GetAll<T>().FirstOrDefault(item => item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        return matchingItem ??
+               throw new InvalidOperationException($"'{name}' is not a valid name for type {typeof(T)}.");
+    }
+
+    public static T FromId<T>(int id) where T : Enumeration
+    {
+        var matchingItem = GetAll<T>().FirstOrDefault(item => item.Id == id);
+        return matchingItem ?? throw new InvalidOperationException($"'{id}' is not a valid id for type {typeof(T)}.");
     }
 }
