@@ -1,1 +1,3 @@
 # Zentry
+
+![Contributors](/contributor.png)
